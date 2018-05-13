@@ -5,6 +5,6 @@
 	<li>Location: {{ location }}</li>
 </ul>
 <p style="margin-top: 20px;"><span style="color:#c3bfbf">{{ about }}</span></p><p class="center-align">
-	<input type="text" placeholder="My shiny Star" class="validate" />
+	<input type="text" placeholder="My shiny Star" class="validate white-text" pattern="[A-Za-z0-9\s]{20}"/>
 	<a class="btn-flat waves-effect waves-light purple darken-1 white-text">Give IT name!</a>
 </p>
