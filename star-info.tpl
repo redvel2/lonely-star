@@ -4,7 +4,8 @@
 	<li>Type: <span style="text-transform: uppercase;">{{ type }}</span></li>
 	<li>Location: {{ location }}</li>
 </ul>
-<p style="margin-top: 20px;"><span style="color:#c3bfbf">{{ about }}</span></p><p class="center-align">
+<p style="margin-top: 20px;"><span style="color:#c3bfbf">{{ about }}</span></p><!-- <p class="center-align">
 	<input type="text" placeholder="My shiny Star" class="validate white-text" pattern="[A-Za-z0-9\s]{20}"/>
 	<a class="btn-flat waves-effect waves-light purple darken-1 white-text">Give IT name!</a>
-</p>
+</p> -->
+<div class="center-align lds-spinner"></div>
