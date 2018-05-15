@@ -1,0 +1,924 @@
+<html><head>
+<meta charset="utf-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
+<script type="text/javascript" src="img.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+<link rel="stylesheet" href="loader.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/7.0.1/bignumber.js"></script>
+
+<script src="nebpay.js"></script>
+
+<style>body, html, img {margin:0;padding:0;}
+body {font-family: Arial, Helwetica, sans-serif;}
+.controls {
+  position: fixed; left: 20px; top: 60px;
+}
+.large {font-size: 30px; font-weight: bold;}
+
+.bg-dark {background-color: #333;}
+.bg-dark:hover {background-color: #444;}
+
+.controls#zoom {
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+}
+.controls#zoom .zoom-button {
+  border-bottom: 2px solid #111;
+  padding: 0 10px;
+}
+.img-center {
+  width:20px; height:20px; vertical-align: middle; display: inline-block;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.pull-right {
+  position: absolute;
+  right: 0;
+}
+
+.popup {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  border-radius: 5px;
+  color: #fff;
+  background-color: #333;
+  z-index: 2;
+}
+
+.popup-content {
+  padding: 10px;
+  font-size: 18px;
+}
+
+.flex-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-bar {
+  width: 100%;
+  height: 42px;
+  background-color: #333;
+  position: fixed;
+  border-bottom: 1px solid #292525;
+  color: #fff;
+}
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.nav-bar .btn {margin: 3px 2px;}
+#starmenu li:before {
+  height: 8px;
+  width: 8px;
+  margin-right: 5px;
+  background-color: #efef17;
+  border-radius: 50%;
+  display: inline-block;
+  content: ' '
+}
+#starmenu .sm {
+  font-size: 0.6em;
+}
+#starmenu ul li a {
+  border-bottom: 1px dotted; 
+}
+#starmenu::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+#starmenu::-webkit-scrollbar-track {
+    background: #666; 
+}
+
+/* Handle */
+#starmenu::-webkit-scrollbar-thumb {
+    background: #555; 
+}
+
+/* Handle on hover */
+#starmenu::-webkit-scrollbar-thumb:hover {
+    background: #444; 
+}
+.loader-small {display: inline-block; width: 16px; height: 16px;}
+.loader-esmall {display: inline-block; width: 10px; height: 10px;}
+
+.paranja {width: 100%; height: 100%; position: fixed; z-index: 100; background-color: #000; opacity: 0.9; color: #fff;}
+
+.content .selection {background-color: #222 ;padding: 1px 5px; display: inline-block; border-radius: 2px;}
+</style>
+
+</head>
+<body>
+
+<div class="controls noselect" id = "zoom">
+<div class="zoom-button large bg-dark" id="zoom-up">+</div>
+<div class="zoom-button large bg-dark" id="zoom-down">-</div>
+<div class="zoom-button large bg-dark" id="map-home" style="margin-top:20px; padding: 10px;"><span class="helper"></span><img src="house.png" alt="pick random star" class="img-center" /></div>
+<div class="zoom-button large bg-dark" id="random-star" style="padding: 10px 0;"><span class="helper"></span><img src="dices.png" alt="pick random star" class="img-center"/></div>
+</div>
+<div class="nav-bar">
+  <div style="padding: 0 10px; border-right: 1px solid #444; display: inline-block; background-color:#222;"><img src="logo.png"  class="img-center" style="width:32px;height: 32px;"/><span class="helper"></span> <a href="">Lonely Star</a></div>
+  <div class="pull-right content" style="margin-right: 10px;display: inline-block;">
+
+  </div>
+</div>
+
+<!-- Loader-->
+<div class="cssload-container">
+  <ul class="cssload-flex-container">
+    <li>
+      <span class="cssload-loading cssload-one"></span>
+      <span class="cssload-loading cssload-two"></span>
+      <span class="cssload-loading-center"></span>
+      <span style="color:#fff;">Loading...</span>
+    </li>
+    </ul>
+    
+</div>
+<!-- End loader -->
+<!-- <button data-target="modal1" class="btn modal-trigger">Modal</button> -->
+<div id="starmenu" style="visibility: hidden; opacity:0; position: fixed; width: 200px; height: 300px; background-color: #333; right: 0; top: 42px; border: 1px solid #272424; border-top: none;overflow-y: scroll;overflow-x: hidden;">
+  <div style="padding:10px; color:#fff" class="content"></div>
+</div>
+<div style="width:300px; position: fixed;top:60px; left: 80px; opacity: 1; background-color: #333; border-radius: 6px; color: #fff; font-size: 0.8em;" data-visibility="visible" data-style-display="block" id="star-info"><div class="noselect close-window" style="position: absolute; z-index=2;right: 5px; top: 5px; cursor: pointer; padding: 0 2px; display: block; background-color: #2f2f2f; line-height: 14px; color: #555; white-space: nowrap; overflow-x: hidden;" data-target="star-info"><div style="transform: rotate(45deg); ">+</div></div>
+<div style="background: url('starinfo-bg.png'); height: 80px; border-bottom: 1px solid #5f5d5d;"></div>
+<div class="content" style="padding: 10px 20px;">
+<h5>Hello, stranger!</h5>
+<p style="">Here are a few tips for you:<ul>
+<li>
+Drag screen with <div class="selection"><i class="fas fa-mouse-pointer"></i> <b>mouse</b></div> or use <div class="selection"><i class="fas fa-search-plus"></i> <b>zoom</b></div> to navigate over space.</li>
+<li>Click on <div class="selection"><i class="fas fa-circle"></i> star</div> to see its information</li>
+</ul></p><p>Picked a nice star? Good. You can set name to it using only <b class="selection">0.1 NAS</b>, so no one in universe can redo this.</p>
+<p class="center-align"><a href="#" class="waves-effect waves-pink btn-flat white-text pink darken-2" id="tutorial-button">got it!</a></p>
+  </div>
+</div>
+<div class="paranja center-align" style="display:none;"><div style="margin-top:100px;"><h4>Contract call error. Please, install <a href="">WebExtensionWallet</a></h4><h5><a href="#" class="btn-flat waves-effect waves-light purple darken-1 white-text" id="view-mode">Continue with no real-time data support</a></h5></div></div>
+
+<script>
+
+function getRandomInRange(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function getRandIntRange(min, max) {
+  return parseInt(getRandomInRange(min, max))
+}
+function User(){
+  this.loggedIn = false;
+  this.nasId = null;
+}
+
+User.prototype = {
+  constructor: User,
+  login: function(id) {
+    this.loggedIn = true;
+    this.nasId = id;
+    return true
+  },
+  logout: function() {
+    this.loggedIn = false;
+    this.nasId = null;
+    return true
+  },
+  In: function() {return this.loggedIn},
+  shortId: function() {
+    return this.nasId.substr(0, 2) + '...'+this.nasId.substr(-6);
+  },
+  stars: function() {
+    if(!this.loggedIn) { return [] }
+    return scene.children
+        .filter(function(el) { return el.userData.star && el.userData.star.isOwner(this.nasId) }, this)
+        .map(function(el) {return el.userData.star})
+        .sort(function(el1, el2) { return el1.submitTime - el2.submitTime })
+  }
+};
+
+function TemplateView(templateName, selection, templateCache, afterRender) {
+  //defines binding between data and template to get ease content update ability
+  this.name = templateName;
+  this._hbTemplate = null;
+  this._selection = selection;
+  this._cache = templatesCache;
+  this._renderContext = null;
+  this.after = afterRender;
+  let self = this;
+  if(templateCache) this._hbTemplate = templateCache[templateName];
+}
+
+TemplateView.prototype = {
+  constructor: TemplateView,
+  render: function(context) {
+    if(!this._hbTemplate) return;
+    this._renderContext = context;
+    this._selection.html(this._hbTemplate(context))
+    if(this.after) this.after();
+
+  },
+  update: function() {
+    if(!this._hbTemplate || !this._renderContext) return;
+    this._selection.html(this._hbTemplate(this._renderContext))
+    if(this.after) this.after();
+  },
+  compileTemplate: function(data) {
+    if (!data) { return };
+    let template = Handlebars.compile(data);
+    if(this._cache) this._cache[this.name] = template;
+    this._hbTemplate = template;
+    return template
+  },
+  loadUrl: function(url ,callback) {
+    let self = this;
+    let a = d3.request(url)
+      .mimeType("text/plain")
+      .response(function(xhr) { return xhr.responseText })
+      .get(function(r) {self.compileTemplate(r); if(callback) callback()});
+  },
+  getCurrentContext: function() {
+    return this._renderContext
+  }
+}
+
+function Star(id, coords, type, color) {
+  this.ID = id;
+  this.position = coords;
+  this.__name = null;
+  this.ownedby = null;
+  this.submitTime = null;
+  this.type = type;
+  this.color = color;
+}
+Star.prototype = {
+  constructor: Star,
+  location: function() {
+    return this.position.map(function(el) { return Number(el).toFixed(3)}).join(', ')
+  },
+  about: function() {
+    return starsDescription[this.type]
+  },
+  name: function() {
+    return this.__name ? this.__name : this.ID
+  },
+  setOwner: function(owner, name , timestamp) {
+    this.ownedby = owner;
+    this.submitTime = timestamp;
+    this.__name = name;
+    // draw new name on canvas
+    var textGeometry = new THREE.TextGeometry(name, {
+        font: font,
+        size: 0.036,
+        height: 0,
+        curveSegments: 12,
+      });
+    var textMesh = new THREE.Mesh(textGeometry, new THREE.MeshBasicMaterial({color: 0xffffff}));
+    textMesh.position.set(this.position[0]+0.06, this.position[1]-0.018, this.position[2]+main_layer_z);
+    textMesh.userData.inactive = true; // turn off click on text
+    scene.add(textMesh);
+  },
+  isOwner: function(owner) {
+    if(this.ownedby == null) { return false };
+    return this.ownedby == owner
+  },
+  isCurrentOwner: function() {
+    return this.isOwner(user.nasId);
+  }
+}
+
+
+
+function Transform(position, callback1, callback2) {
+  this.beforeCallback = callback1;
+  this.afterCallback = callback2;
+  this.position = position;
+  this.STATE_INITIAL = 1, this.STATE_PROCESSING = 2, this.STATE_FINISHED = 3;
+  this.__state = this.STATE_INITIAL;
+}
+
+Transform.prototype = {
+  constructor: Transform,
+  before: function() {
+    if (this.beforeCallback && this.__state == this.STATE_INITIAL) {
+      this.beforeCallback();
+      this.__state = this.STATE_PROCESSING;
+    }
+  },
+  after: function() {
+    if (this.afterCallback && this.__state == this.STATE_FINISHED) this.afterCallback()
+  },
+  apply: function(time) {
+    this.before();
+    moveCamera(this.calculateNewCameraPosition(time));
+    if (this.position.equals(camera.position)) {this.__state = this.STATE_FINISHED};
+    this.after();
+  },
+  finished: function() {
+    return this.__state == this.STATE_FINISHED;
+  },
+  calculateNewCameraPosition: function(time) {
+    var delta = ( time - prevTime ) / 1000;
+    velocity.z -= velocity.z * 10.0 * delta;
+    var curentPosition = new THREE.Vector3().copy(camera.position);
+    velocity.z -= 400.0 * delta;
+    var result = curentPosition.add(
+      new THREE.Vector3()
+      .copy(this.position)
+      .sub(curentPosition)
+      .multiplyScalar(Math.abs(delta*velocity.z*velocity_modifier)/curentPosition.distanceTo(this.position))); // C = A + (B - A) * (len / |B - A|)
+    if (result.distanceTo(this.position) < 1) {
+      result = this.position;
+    }
+    return result;
+  }
+}
+
+
+let starsDescription = {
+  hypergiant: "A hypergiant (luminosity class 0 or Ia+) is among the very rare kinds of stars that typically show tremendous luminosities and very high rates of mass loss by stellar winds.",
+  supergiant: "Supergiants are among the most massive and most luminous stars, spanning from about 3,500 K to over 20,000 K",
+  "bright giant": "These are stars which straddle the boundary between ordinary giants and supergiants.",
+  giant: "Giant stars have radii up to a few hundred times the Sun and luminosities between 10 and a few thousand times that of the Sun",
+  subgiant: "A subgiant is a star that is brighter than a normal main-sequence star of the same spectral class, but not as bright as true giant stars.",
+  dwarf: "These are the most numerous true stars in the universe, and include the Earth's Sun. Also known as main-sequence stars",
+  subdwarf: "Dwarfs are defined as stars with luminosity 1.5 to 2 magnitudes lower than that of main-sequence stars of the same spectral type.",
+  "white dwarf": "A white dwarf, also called a degenerate dwarf is very dense: its mass is comparable to that of the Sun, while its volume is comparable to that of Earth.",
+  "red dwarf": "A red dwarf is a small and relatively cool star on the main sequence. Red dwarfs range in mass from a low of 0.075 to about 0.50 solar mass and have a surface temperature of less than 4,000 K",
+  "brown dwarf": "Brown dwarfs are substellar objects that occupy the mass range between the heaviest gas giant planets and the lightest stars, of approximately 13 to 75–80 Jupiter masses.",
+  "black hole": "A black hole is a region of spacetime exhibiting such strong gravitational effects that nothing — not even light — can escape from inside it."
+};
+
+
+
+let user = new User();
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+
+// Add canvas
+let renderer = new THREE.WebGLRenderer();
+renderer.setSize(width, height);
+document.body.appendChild(renderer.domElement);
+let sceneReady = false;
+
+// Add stats box
+// stats = new Stats();
+// stats.domElement.style.position = 'absolute';
+// stats.domElement.style.bottom = '0px';
+// stats.domElement.style.left = '0px'
+// document.body.appendChild(stats.domElement);
+
+const near_plane = 2;
+const far_plane = 300;
+const main_layer_z = 100;
+const zoom_step = 30;
+var velocity = new THREE.Vector3();
+var prevTime = performance.now();
+
+var activeTransform = null;
+var canvas = d3.select('canvas')
+var colors = [0xfff572, 0xfdf8b0, 0xfff022, 0xfcf9cb, 0xfda01b, 0xfd601b, 0xc03e05, 0x9bfcd6];
+var velocity_modifier = 1.5;
+var font = null;
+var text_buffer = [];
+let d3Transition = d3.transition().duration(200).ease(d3.easeLinear);
+// Set up camera and scene
+let camera = new THREE.PerspectiveCamera(
+  20,
+  width / height,
+  near_plane,
+  far_plane 
+);
+camera.position.set(0, 0, far_plane);
+camera.lookAt(new THREE.Vector3(0,0,0));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x141f31);
+scene.fog = new THREE.FogExp2( 0x7f9ac7, 0.0025 );
+let pointsMaterial;
+
+Handlebars.registerHelper('starsList', function(options) {
+  var ret = "<ul>";
+  context = user.stars();
+  for(var i=0, j=context.length; i<j; i++) {
+     ret += options.fn(context[i])
+  }
+  return ret + "</ul>";
+});
+
+let templatesCache = {};
+
+//define animations etc
+
+function setHome() {
+  if (activeTransform != null) {
+    return;
+  }
+  activeTransform = new Transform(new THREE.Vector3(0,0, main_layer_z + 100), function () {hideElement(d3.select("#star-info"))});
+}
+
+function toggleVolume() {
+  if (audio.paused) {
+    audio.play();
+  }
+  let selection = d3.select(this);
+  let state = selection.attr("data-state");
+  let src = state == 'active' ? "muted.png":"unmuted.png";
+  let newState = state == 'active' ? 'muted':'active';
+  audio.volume = state == 'active' ? 0 : 1;
+  selection.select("img").attr("src", src);
+  selection.attr("data-state", newState); 
+}
+
+function randomStar() {
+  if (activeTransform != null) {
+    return;
+  }
+  let stars = scene.children.filter(function (el) {return el.userData.objectType == 'star'});
+  let starObj = stars[getRandIntRange(0, stars.length-1)];
+  let position = new THREE.Vector3().copy(starObj.position);
+  position.z += 2;
+  setStarTransform(position, starObj);
+}
+
+function addLoader(selection) {
+  selection.html(selection.html()+'<img src="loader.gif" class= "img-center loader-esmall"/>')
+}
+
+function logIn() {
+  addLoader(d3.select(this));
+  nebPay.simulateCall(contractAddress, 0, "echo", "", {
+                qrcode: {
+                    showQRCode: false
+                },
+                goods: {
+                    name: "test",
+                    desc: "test goods"
+                },
+                callback: function(resp) { 
+                  user.login(JSON.parse(resp.result));
+                  NavBarView.update();
+                  StarInfoView.update();
+                  StarMenuView.update();
+                }
+            });
+}
+
+function logOut() {
+  if (!user.logout()) {return};
+  starMenu.call(document.getElementById("starmenu-trigger"), 'clicked');
+  NavBarView.update();
+  StarInfoView.update();
+}
+
+function starMenu(state) {
+  let selection = d3.select(this);
+  state = state == null? selection.attr("data-state") : state;
+  let t = d3.transition()
+    .duration(200)
+    .ease(d3.easeLinear);
+  if (state == 'normal') {
+    d3.select("#starmenu").transition(t).style("opacity", "1").style("visibility", "visible");
+    selection.style("background-color", "grey");
+    selection.attr("data-state", 'clicked');
+  }
+  else {
+    d3.select("#starmenu").transition(t).style("opacity", "0").style("visibility", "hidden");
+    selection.style("background-color", "");
+    selection.attr("data-state", 'normal');
+  }
+}
+
+function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
+function setName() {
+  let input = d3.select("#star-name-input").property("value");
+  if(!input) { return };
+  let context = StarInfoView.getCurrentContext()
+  if(!context) { return };
+  nebPay.simulateCall(contractAddress, 0.1, "setName", JSON.stringify([context.star.ID, input]), {
+                qrcode: {
+                    showQRCode: false
+                },
+                goods: {
+                    name: "test",
+                    desc: "test goods"
+                },
+                callback: function(resp) { 
+                  console.log("RESP IS ", resp);
+                  if(resp.result == 'true') {
+                    nebPay.call(contractAddress, 0.1, "setName", JSON.stringify([context.star.ID, input]), {
+                        qrcode: {
+                            showQRCode: false
+                        },
+                        goods: {
+                            name: "test",
+                            desc: "test goods"
+                        },
+                        callback: function(resp) {
+                          console.log("RESP2 IS ", resp);
+                          if(resp.txhash){
+                            context.star.setOwner(user.nasId, input, Date.now());
+                            StarInfoView.update();
+                            StarMenuView.update();
+                          } else {d3.select("#star-name-input").classed("invalid", true)}
+                        }
+                      });
+                  } else {d3.select("#star-name-input").classed("invalid", true)}
+                }
+            });
+}
+
+function bindStarWindow() {
+  d3.selectAll(".login-button").on('click', logIn);
+  d3.select("#star-info .content #set-name").on('click', setName);
+}
+
+function bindNavBar() {
+  d3.selectAll(".login-button").on('click', logIn);
+  d3.select("#volume").on('click', toggleVolume);
+  d3.select("#starmenu-trigger").on('click', starMenu);
+  d3.select("#logout-button").on('click', logOut);
+}
+
+function bindStarMenu() {
+  d3.selectAll("#starmenu a").on("click", function(){ moveToID(d3.select(this).attr("data-star-id"))});
+}
+
+d3.select("#zoom-up").on('click',  function(event) {
+  if (activeTransform == null) {
+    var pos = new THREE.Vector3().copy(camera.position);
+    pos.z -= zoom_step;
+    if (pos.z < main_layer_z) {
+      pos.z = main_layer_z;
+    }
+    activeTransform = new Transform(pos);
+  }
+});
+
+d3.select("#zoom-down").on('click', function() {
+  if (activeTransform == null) {
+    var pos = new THREE.Vector3().copy(camera.position);
+    pos.z +=zoom_step;
+    if (pos.z > far_plane) {
+      pos.z = far_plane;
+    }
+    activeTransform = new Transform(pos);
+  }
+});
+
+d3.select("#star-info .close-window").on("click", function() {
+  let selection = d3.select(this);
+  let target = d3.select("#" + selection.attr("data-target"));
+  hideElement(target);
+});
+
+d3.select(".paranja #view-mode").on("click", function() {
+  d3.select('.paranja').style("display", "none");
+  starArchive.ready = true;
+  StarInfoView.update();
+  NavBarView.update();
+});
+
+d3.select("#tutorial-button").on('click', function() {
+  hideElement(d3.select("#star-info"))
+})
+
+d3.select("#random-star").on('click', randomStar);
+d3.select("#map-home").on('click', setHome);
+
+
+// define 'views'
+var starArchive = {data: [], ready: false, executed: false};
+let globalRenderContext = {archive: starArchive, user: user};
+let StarInfoView = new TemplateView("star-info", d3.select("#star-info .content"), templatesCache, bindStarWindow);
+let NavBarView = new TemplateView("nav-bar", d3.select(".nav-bar .content"), templatesCache, bindNavBar);
+let StarMenuView = new TemplateView("star-menu", d3.select("#starmenu .content"), templatesCache, bindStarMenu);
+StarInfoView.loadUrl("https://raw.githubusercontent.com/redvel2/lonely-star/master/star-info.tpl");
+NavBarView.loadUrl("https://raw.githubusercontent.com/redvel2/lonely-star/master/nav-bar.tpl",
+  function() { NavBarView.render(globalRenderContext)});
+StarMenuView.loadUrl('https://raw.githubusercontent.com/redvel2/lonely-star/master/star-menu.tpl', 
+  function() { StarMenuView.render(globalRenderContext)}
+  );
+// end views
+
+let audio = new Audio("ambient.mp3")
+audio.volume = 0;
+audio.loop = true;
+
+//NebPay init
+var NebPay = require("nebpay");
+var nebPay = new NebPay();
+let contractAddress = "n1vq2CbL569kA47jgxnPuU3tyu8jFnMYHS7";
+
+
+// ---- Load all resources and draw objects -----
+
+var loader = new THREE.FontLoader();
+loader.load( 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_regular.typeface.json', function ( loaded ) {
+  font = loaded;
+  beginDraw()
+});
+loadStarsArchive();
+//loadTemplate("star-info", "https://raw.githubusercontent.com/redvel2/lonely-star/master/star-info.tpl");
+
+function beginDraw(archive) {
+  fetch('https://raw.githubusercontent.com/redvel2/lonely-star/master/stardata.json')
+  .then(response => response.json())
+  .then(raw_points => {
+    // const colors = [];
+    // var segmentCount = 32, radius = 0.5, material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, side: THREE.DoubleSide });
+    // const pointsContainer = new THREE.Object3D();
+    // limit = 0;
+    // for (const point of raw_points) {
+    //   if (limit > 1000) break;
+    //   var pointsGeometry = new THREE.Geometry();
+    //   for (var i = 0; i <= segmentCount; i++) {
+    //     var theta = (i / segmentCount) * Math.PI * 2;
+    //     const vertex = new THREE.Vector3(Math.cos(theta)*radius+point.coords[0], Math.sin(theta)*radius+point.coords[1], 0);
+    //     pointsGeometry.vertices.push(vertex);
+    //   }
+    //   points = new THREE.Mesh(pointsGeometry, material);
+    //   scene.add(points);
+    //   limit++;
+    // }
+    // scene.add(pointsContainer);
+    var obj = new THREE.Object3D()
+    var limit = 0;
+    var boxGeometry = new THREE.BoxGeometry(width,height, 1);
+    var texture = THREE.ImageUtils.loadTexture(BGimg);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set( 60, 50 );
+    var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+        map:texture});
+    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+    var box = new THREE.Mesh(boxGeometry, img);
+    box.userData.inactive = true;
+    scene.add(box);
+    for (const point of raw_points) {
+      if (limit > 2000) break;
+      //var light = new THREE.PointLight(0xffffff, 1);
+      //light.position.set(point.coords[0], point.coords[1], -25);
+      //light.add(new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xfffff } ) ));
+      var geometry = new THREE.CircleBufferGeometry( 0.05, 32 );
+      var circle = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial( { color: point.color} ));
+      circle.position.set(point.coords[0], point.coords[1], main_layer_z + point.coords[2]);
+      circle.userData.objectType = 'star';
+      circle.userData.star = new Star(point.id, point.coords, point.type, point.color);
+      circle.userData.hasName = false;
+      //draw text
+      limit++;
+      scene.add(circle);
+    }
+    moveCamera(new THREE.Vector3(0,0, main_layer_z + 100));
+    removeLoader();
+    sceneReady = true;
+  })
+}
+
+// Set up zoom behavior
+const zoom = d3.zoom()
+  .scaleExtent([near_plane, far_plane-main_layer_z])
+  .wheelDelta(function wheelDelta() {
+    // this inverts d3 zoom direction, which makes it the rith zoom direction for setting the camera
+    return d3.event.deltaY * (d3.event.deltaMode ? 120 : 1) / 500;
+  })
+  .on('zoom', () => {
+    const event = d3.event;
+    if (event.sourceEvent) {
+
+      // Get z from D3
+      const new_z = event.transform.k + main_layer_z;
+      if (new_z !== camera.position.z) {
+        
+        // Handle a zoom event
+        const { clientX, clientY } = event.sourceEvent;
+
+        // Project a vector from current mouse position and zoom level
+        // Find the x and y coordinates for where that vector intersects the new
+        // zoom level.
+        // Code from WestLangley https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z/13091694#13091694
+        const vector = new THREE.Vector3(
+          clientX / width * 2 - 1,
+          - (clientY / height) * 2 + 1,
+          1 
+        );
+        vector.unproject(camera);
+        const dir = vector.sub(camera.position).normalize();
+        const distance = (new_z - camera.position.z)/dir.z;
+        const pos = camera.position.clone().add(dir.multiplyScalar(distance));
+                        
+        // Set the camera to new coordinates
+        camera.position.set(pos.x, pos.y, new_z);
+
+      } else {
+
+        // Handle panning
+        const { movementX, movementY } = event.sourceEvent;
+
+        // Adjust mouse movement by current scale and set camera
+        const current_scale = getCurrentScale();
+        camera.position.set(camera.position.x - movementX/current_scale, camera.position.y +
+          movementY/current_scale, camera.position.z);
+      }
+    }
+  });
+
+// Add zoom listener
+const view = d3.select(renderer.domElement);
+view.call(zoom);
+  
+// Disable double click to zoom because I'm not handling it in Three.js
+view.on('dblclick.zoom', null);
+
+// Sync d3 zoom with camera z position
+zoom.scaleTo(view, far_plane);
+
+var raycaster = new THREE.Raycaster();
+var mouse = new THREE.Vector2(-1000,-1000);
+
+function onMouseUp() {
+  // calculate mouse position in normalized device coordinates
+  // (-1 to +1) for both components
+  let event = d3.event;
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  
+
+}
+
+function moveCamera(position) {
+  canvas.call(zoom.transform, d3.zoomIdentity.translate(position.x, position.y).scale(position.z - main_layer_z));
+  camera.position.set(position.x, position.y, position.z)
+}
+
+function findObjectsIntersection() {
+  raycaster.setFromCamera( mouse, camera );
+
+  // calculate objects intersecting the picking ray
+  var intersects = raycaster.intersectObjects( scene.children ).filter(function(x) {
+    return x.object.userData && x.object.userData.inactive === undefined
+  });
+  //console.log(raycaster.intersectObjects( scene.children ));
+  if (intersects.length == 1 && activeTransform == null && intersects[0].object.position.distanceTo(camera.position) < 50) {
+    //console.log(intersects);
+    let position = new THREE.Vector3().copy(intersects[0].object.position);
+    position.z += 2;
+    setStarTransform(position, intersects[0].object);
+  }
+  // for ( var i = 0; i < intersects.length; i++ ) {
+  //   if (intersects[i].object.userData.inactive) continue;
+  //   intersects[ i ].object.material.color.set( 0xff0000 );
+
+  // }
+  mouse.x = -1000, mouse.y = -1000;
+}
+
+
+
+// Three.js render loop
+function animate() {
+  let time = performance.now()
+  requestAnimationFrame(animate);
+  findObjectsIntersection();
+  if (activeTransform) {
+    activeTransform.apply(time);
+    if (activeTransform.finished()) { activeTransform = null;}
+  }
+  prevTime = time;
+  renderer.render(scene, camera);
+  if (starArchive.ready && sceneReady && !starArchive.executed) {
+    for (let el of starArchive.data) {
+      obj = scene.children.find(function(e) { return e.userData.star && e.userData.star.ID == el.star });
+      if(!obj) continue;
+      obj.userData.star.setOwner(el.data.userId, el.data.name, el.data.timestamp);
+    }
+    starArchive.executed = true;
+    StarInfoView.update();
+  }
+}
+
+d3.select("canvas").on( 'click', onMouseUp);
+
+// --- Set all animations -----
+
+
+
+function moveToID(id) {
+  if (activeTransform!=null) {
+    return
+  }
+  if (id == null) {return};
+  let star = scene.children.find(function(el) { return el.userData.objectType == 'star' && el.userData.star.ID == id});
+  if (star) {
+    let position = new THREE.Vector3().copy(star.position)
+    position.z += 2;
+    setStarTransform(position, star)
+  }
+}
+
+
+// --- end Animations set
+
+// From https://github.com/anvaka/three.map.control, used for panning
+function getCurrentScale() {
+  var vFOV = camera.fov * Math.PI / 180
+  var scale_height = 2 * Math.tan( vFOV / 2 ) * (camera.position.z - main_layer_z)
+  var currentScale = 4 * height / scale_height
+  mouse.x = -10000, mouse.y = -10000;
+  return currentScale
+}
+
+function removeLoader() {
+  d3.select(".cssload-container").transition(d3Transition).style("opacity", "0").style("visibility", "hidden");
+}
+
+function hideElement(selection) {
+  if (selection.attr("data-visibility") == "hidden" || selection.attr("data-visibility") == null) { return };
+  selection.attr("data-style-display", selection.style("display"));
+  selection.style("display", "none").style("visibility", "hidden").style('opacity', 0);
+  selection.attr("data-visibility", "hidden");
+  return true
+}
+
+function showElement(selection) {
+  if (selection.attr("data-visibility") == "visible" || selection.attr("data-visibility") == null) { return };
+  let display = selection.attr("data-style-display");
+  if (display == null) { return };
+
+  selection.transition(d3Transition).style("display", display).style("visibility", "visible").style('opacity', 1);
+  selection.attr("data-visibility", "visible");
+  return true
+}
+
+function setStarTransform(position, starObj) {
+  activeTransform = new Transform(position,
+    function() { hideElement(d3.select("#star-info"))},
+    function() { showElement(d3.select("#star-info"))}
+   );
+  StarInfoView.render(Object.assign({star: starObj.userData.star}, globalRenderContext));
+}
+
+function loadStarsArchive() {
+  nebPay.simulateCall(contractAddress, 0, "getArchive", "", {
+                qrcode: {
+                    showQRCode: false
+                },
+                goods: {
+                    name: "test",
+                    desc: "test goods"
+                },
+                callback: function(resp) { 
+                  starArchive.data = JSON.parse(resp['result']);
+                  starArchive.ready = true;
+                  StarInfoView.update();
+                  NavBarView.update();
+                }
+            });
+  setTimeout(function() {
+    if (!starArchive.ready) d3.select(".paranja").style("display", "block");
+  }, 1000*10);
+}
+
+animate();
+
+
+// Point generator function
+function phyllotaxis(radius) {
+  const theta = Math.PI * (3 - Math.sqrt(5));
+  return function(i) {
+    const r = radius * Math.sqrt(i), a = theta * i;
+    return [
+      width / 2 + r * Math.cos(a) - width / 2,
+      height / 2 + r * Math.sin(a) - height / 2
+    ];
+  };
+}
+
+</script>
+</body>
+</html>
