@@ -8,10 +8,10 @@
 {{/with}} 
 {{#if archive.ready }}{{#if star.ownedby }}<p>OWNED BY {{#with star}}{{#if isCurrentOwner }}YOU{{else}}{{ownedby}}{{/if}}{{/with}}</p>{{else if user.loggedIn }}<p class="center-align">
   <input type="text" placeholder="My shiny Star" id="star-name-input" class="validate white-text" />
-  <a class="btn-flat waves-effect waves-light purple darken-1 white-text" id="set-name">Give IT name! <img src="loader.gif" class= "loader-small" style="display:none"/></a>
+  <a class="btn-flat waves-effect waves-light purple darken-1 white-text" id="set-name">Give IT name! <img src="images/loader.gif" class= "loader-small" style="display:none"/></a>
 </p>{{else}}<p class="center-align"><a class="btn-flat waves-effect waves-light purple darken-1 white-text login-button"><span class="helper">Log in</span> </a></p>
 
 {{/if}}{{else}}
 <div class="center-align archive-loader">
-<img src="loader.gif" class= "loader-small" />
+<img src="images/loader.gif" class= "loader-small" />
 </div>{{/if}}
