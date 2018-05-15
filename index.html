@@ -3,16 +3,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
-<script type="text/javascript" src="img.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
-<link rel="stylesheet" href="loader.css">
+<link rel="stylesheet" href="css/loader.css">
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/7.0.1/bignumber.js"></script>
-
-<script src="nebpay.js"></script>
+<script src="scripts/nebpay.js"></script>
 
 <style>body, html, img {margin:0;padding:0;}
 body {font-family: Arial, Helwetica, sans-serif;}
@@ -136,11 +133,11 @@ body {font-family: Arial, Helwetica, sans-serif;}
 <div class="controls noselect" id = "zoom">
 <div class="zoom-button large bg-dark" id="zoom-up">+</div>
 <div class="zoom-button large bg-dark" id="zoom-down">-</div>
-<div class="zoom-button large bg-dark" id="map-home" style="margin-top:20px; padding: 10px;"><span class="helper"></span><img src="house.png" alt="pick random star" class="img-center" /></div>
-<div class="zoom-button large bg-dark" id="random-star" style="padding: 10px 0;"><span class="helper"></span><img src="dices.png" alt="pick random star" class="img-center"/></div>
+<div class="zoom-button large bg-dark" id="map-home" style="margin-top:20px; padding: 10px;"><span class="helper"></span><img src="images/house.png" alt="pick random star" class="img-center" /></div>
+<div class="zoom-button large bg-dark" id="random-star" style="padding: 10px 0;"><span class="helper"></span><img src="images/dices.png" alt="pick random star" class="img-center"/></div>
 </div>
 <div class="nav-bar">
-  <div style="padding: 0 10px; border-right: 1px solid #444; display: inline-block; background-color:#222;"><img src="logo.png"  class="img-center" style="width:32px;height: 32px;"/><span class="helper"></span> <a href="">Lonely Star</a></div>
+  <div style="padding: 0 10px; border-right: 1px solid #444; display: inline-block; background-color:#222;"><img src="images/logo.png"  class="img-center" style="width:32px;height: 32px;"/><span class="helper"></span> <a href="">Lonely Star</a></div>
   <div class="pull-right content" style="margin-right: 10px;display: inline-block;">
 
   </div>
@@ -186,6 +183,7 @@ function getRandomInRange(min, max) {
 function getRandIntRange(min, max) {
   return parseInt(getRandomInRange(min, max))
 }
+
 function User(){
   this.loggedIn = false;
   this.nasId = null;
@@ -286,13 +284,13 @@ Star.prototype = {
     this.submitTime = timestamp;
     this.__name = name;
     // draw new name on canvas
-    var textGeometry = new THREE.TextGeometry(name, {
+    let textGeometry = new THREE.TextGeometry(name, {
         font: font,
         size: 0.036,
         height: 0,
         curveSegments: 12,
       });
-    var textMesh = new THREE.Mesh(textGeometry, new THREE.MeshBasicMaterial({color: 0xffffff}));
+    let textMesh = new THREE.Mesh(textGeometry, new THREE.MeshBasicMaterial({color: 0xffffff}));
     textMesh.position.set(this.position[0]+0.06, this.position[1]-0.018, this.position[2]+main_layer_z);
     textMesh.userData.inactive = true; // turn off click on text
     scene.add(textMesh);
@@ -337,11 +335,11 @@ Transform.prototype = {
     return this.__state == this.STATE_FINISHED;
   },
   calculateNewCameraPosition: function(time) {
-    var delta = ( time - prevTime ) / 1000;
+    let delta = ( time - prevTime ) / 1000;
     velocity.z -= velocity.z * 10.0 * delta;
-    var curentPosition = new THREE.Vector3().copy(camera.position);
+    let curentPosition = new THREE.Vector3().copy(camera.position);
     velocity.z -= 400.0 * delta;
-    var result = curentPosition.add(
+    let result = curentPosition.add(
       new THREE.Vector3()
       .copy(this.position)
       .sub(curentPosition)
@@ -392,15 +390,15 @@ const near_plane = 2;
 const far_plane = 300;
 const main_layer_z = 100;
 const zoom_step = 30;
-var velocity = new THREE.Vector3();
-var prevTime = performance.now();
+let velocity = new THREE.Vector3();
+let prevTime = performance.now();
 
-var activeTransform = null;
-var canvas = d3.select('canvas')
-var colors = [0xfff572, 0xfdf8b0, 0xfff022, 0xfcf9cb, 0xfda01b, 0xfd601b, 0xc03e05, 0x9bfcd6];
-var velocity_modifier = 1.5;
-var font = null;
-var text_buffer = [];
+let activeTransform = null;
+let canvas = d3.select('canvas')
+let colors = [0xfff572, 0xfdf8b0, 0xfff022, 0xfcf9cb, 0xfda01b, 0xfd601b, 0xc03e05, 0x9bfcd6];
+let velocity_modifier = 1.5;
+let font = null;
+let text_buffer = [];
 let d3Transition = d3.transition().duration(200).ease(d3.easeLinear);
 // Set up camera and scene
 let camera = new THREE.PerspectiveCamera(
@@ -417,9 +415,9 @@ scene.fog = new THREE.FogExp2( 0x7f9ac7, 0.0025 );
 let pointsMaterial;
 
 Handlebars.registerHelper('starsList', function(options) {
-  var ret = "<ul>";
+  let ret = "<ul>";
   context = user.stars();
-  for(var i=0, j=context.length; i<j; i++) {
+  for(let i=0, j=context.length; i<j; i++) {
      ret += options.fn(context[i])
   }
   return ret + "</ul>";
@@ -442,7 +440,7 @@ function toggleVolume() {
   }
   let selection = d3.select(this);
   let state = selection.attr("data-state");
-  let src = state == 'active' ? "muted.png":"unmuted.png";
+  let src = state == 'active' ? "images/muted.png":"images/unmuted.png";
   let newState = state == 'active' ? 'muted':'active';
   audio.volume = state == 'active' ? 0 : 1;
   selection.select("img").attr("src", src);
@@ -461,7 +459,7 @@ function randomStar() {
 }
 
 function addLoader(selection) {
-  selection.html(selection.html()+'<img src="loader.gif" class= "img-center loader-esmall"/>')
+  selection.html(selection.html()+'<img src="images/loader.gif" class= "img-center loader-esmall"/>')
 }
 
 function logIn() {
@@ -509,7 +507,7 @@ function starMenu(state) {
 }
 
 function escapeHtml(str) {
-    var div = document.createElement('div');
+    let div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
 }
@@ -570,7 +568,7 @@ function bindStarMenu() {
 
 d3.select("#zoom-up").on('click',  function(event) {
   if (activeTransform == null) {
-    var pos = new THREE.Vector3().copy(camera.position);
+    let pos = new THREE.Vector3().copy(camera.position);
     pos.z -= zoom_step;
     if (pos.z < main_layer_z) {
       pos.z = main_layer_z;
@@ -581,7 +579,7 @@ d3.select("#zoom-up").on('click',  function(event) {
 
 d3.select("#zoom-down").on('click', function() {
   if (activeTransform == null) {
-    var pos = new THREE.Vector3().copy(camera.position);
+    let pos = new THREE.Vector3().copy(camera.position);
     pos.z +=zoom_step;
     if (pos.z > far_plane) {
       pos.z = far_plane;
@@ -612,32 +610,32 @@ d3.select("#map-home").on('click', setHome);
 
 
 // define 'views'
-var starArchive = {data: [], ready: false, executed: false};
+let starArchive = {data: [], ready: false, executed: false};
 let globalRenderContext = {archive: starArchive, user: user};
 let StarInfoView = new TemplateView("star-info", d3.select("#star-info .content"), templatesCache, bindStarWindow);
 let NavBarView = new TemplateView("nav-bar", d3.select(".nav-bar .content"), templatesCache, bindNavBar);
 let StarMenuView = new TemplateView("star-menu", d3.select("#starmenu .content"), templatesCache, bindStarMenu);
-StarInfoView.loadUrl("https://raw.githubusercontent.com/redvel2/lonely-star/master/star-info.tpl");
-NavBarView.loadUrl("https://raw.githubusercontent.com/redvel2/lonely-star/master/nav-bar.tpl",
+StarInfoView.loadUrl("templates/star-info.tpl");
+NavBarView.loadUrl("templates/nav-bar.tpl",
   function() { NavBarView.render(globalRenderContext)});
-StarMenuView.loadUrl('https://raw.githubusercontent.com/redvel2/lonely-star/master/star-menu.tpl', 
+StarMenuView.loadUrl('templates/star-menu.tpl', 
   function() { StarMenuView.render(globalRenderContext)}
   );
 // end views
 
-let audio = new Audio("ambient.mp3")
+let audio = new Audio("audio/ambient.mp3")
 audio.volume = 0;
 audio.loop = true;
 
 //NebPay init
-var NebPay = require("nebpay");
-var nebPay = new NebPay();
+let NebPay = require("nebpay");
+let nebPay = new NebPay();
 let contractAddress = "n1vq2CbL569kA47jgxnPuU3tyu8jFnMYHS7";
 
 
 // ---- Load all resources and draw objects -----
 
-var loader = new THREE.FontLoader();
+let loader = new THREE.FontLoader();
 loader.load( 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_regular.typeface.json', function ( loaded ) {
   font = loaded;
   beginDraw()
@@ -646,18 +644,18 @@ loadStarsArchive();
 //loadTemplate("star-info", "https://raw.githubusercontent.com/redvel2/lonely-star/master/star-info.tpl");
 
 function beginDraw(archive) {
-  fetch('https://raw.githubusercontent.com/redvel2/lonely-star/master/stardata.json')
+  fetch('stardata.json')
   .then(response => response.json())
   .then(raw_points => {
     // const colors = [];
-    // var segmentCount = 32, radius = 0.5, material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, side: THREE.DoubleSide });
+    // let segmentCount = 32, radius = 0.5, material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, side: THREE.DoubleSide });
     // const pointsContainer = new THREE.Object3D();
     // limit = 0;
     // for (const point of raw_points) {
     //   if (limit > 1000) break;
-    //   var pointsGeometry = new THREE.Geometry();
-    //   for (var i = 0; i <= segmentCount; i++) {
-    //     var theta = (i / segmentCount) * Math.PI * 2;
+    //   let pointsGeometry = new THREE.Geometry();
+    //   for (let i = 0; i <= segmentCount; i++) {
+    //     let theta = (i / segmentCount) * Math.PI * 2;
     //     const vertex = new THREE.Vector3(Math.cos(theta)*radius+point.coords[0], Math.sin(theta)*radius+point.coords[1], 0);
     //     pointsGeometry.vertices.push(vertex);
     //   }
@@ -666,26 +664,26 @@ function beginDraw(archive) {
     //   limit++;
     // }
     // scene.add(pointsContainer);
-    var obj = new THREE.Object3D()
-    var limit = 0;
-    var boxGeometry = new THREE.BoxGeometry(width,height, 1);
-    var texture = THREE.ImageUtils.loadTexture(BGimg);
+    let obj = new THREE.Object3D()
+    let limit = 0;
+    let boxGeometry = new THREE.BoxGeometry(width,height, 1);
+    let texture = THREE.ImageUtils.loadTexture("images/stars-bg5.png");
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set( 60, 50 );
-    var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+    let img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
         map:texture});
-    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-    var box = new THREE.Mesh(boxGeometry, img);
+    let material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+    let box = new THREE.Mesh(boxGeometry, img);
     box.userData.inactive = true;
     scene.add(box);
     for (const point of raw_points) {
       if (limit > 2000) break;
-      //var light = new THREE.PointLight(0xffffff, 1);
+      //let light = new THREE.PointLight(0xffffff, 1);
       //light.position.set(point.coords[0], point.coords[1], -25);
       //light.add(new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xfffff } ) ));
-      var geometry = new THREE.CircleBufferGeometry( 0.05, 32 );
-      var circle = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial( { color: point.color} ));
+      let geometry = new THREE.CircleBufferGeometry( 0.05, 32 );
+      let circle = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial( { color: point.color} ));
       circle.position.set(point.coords[0], point.coords[1], main_layer_z + point.coords[2]);
       circle.userData.objectType = 'star';
       circle.userData.star = new Star(point.id, point.coords, point.type, point.color);
@@ -758,8 +756,8 @@ view.on('dblclick.zoom', null);
 // Sync d3 zoom with camera z position
 zoom.scaleTo(view, far_plane);
 
-var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2(-1000,-1000);
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2(-1000,-1000);
 
 function onMouseUp() {
   // calculate mouse position in normalized device coordinates
@@ -780,7 +778,7 @@ function findObjectsIntersection() {
   raycaster.setFromCamera( mouse, camera );
 
   // calculate objects intersecting the picking ray
-  var intersects = raycaster.intersectObjects( scene.children ).filter(function(x) {
+  let intersects = raycaster.intersectObjects( scene.children ).filter(function(x) {
     return x.object.userData && x.object.userData.inactive === undefined
   });
   //console.log(raycaster.intersectObjects( scene.children ));
@@ -790,7 +788,7 @@ function findObjectsIntersection() {
     position.z += 2;
     setStarTransform(position, intersects[0].object);
   }
-  // for ( var i = 0; i < intersects.length; i++ ) {
+  // for ( let i = 0; i < intersects.length; i++ ) {
   //   if (intersects[i].object.userData.inactive) continue;
   //   intersects[ i ].object.material.color.set( 0xff0000 );
 
@@ -846,9 +844,9 @@ function moveToID(id) {
 
 // From https://github.com/anvaka/three.map.control, used for panning
 function getCurrentScale() {
-  var vFOV = camera.fov * Math.PI / 180
-  var scale_height = 2 * Math.tan( vFOV / 2 ) * (camera.position.z - main_layer_z)
-  var currentScale = 4 * height / scale_height
+  let vFOV = camera.fov * Math.PI / 180
+  let scale_height = 2 * Math.tan( vFOV / 2 ) * (camera.position.z - main_layer_z)
+  let currentScale = 4 * height / scale_height
   mouse.x = -10000, mouse.y = -10000;
   return currentScale
 }
