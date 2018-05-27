@@ -11,25 +11,13 @@ var AnotherContract = function () {
 	}),
 	LocalContractStorage.defineMapProperty(this, "userDataArchive");
 	LocalContractStorage.defineProperty(this, "contractOwner");
-	LocalContractStorage.defineProperty(this, "minAmount", {
-        stringify: function (obj) {
-            return obj.toString()
-        },
-        parse: function (str) {
-            return new BigNumber(str)
-        }
-	});
 };
 AnotherContract.prototype = {
     init: function() { 
-    	this.userDataArchive.set("index", [])
-    	this.contractOwner = "n1RejW1wtsQzp2hPuzfv1DUDtZV31xnNZVw";
-    	this.minAmount = new BigNumber(0.1*10**18);
+    	this.userDataArchive.set("index", []);
     },
     setName: function (id, name) {
     	if(typeof id == 'undefined' || typeof name == 'undefined' || id.length!=32 || !name.length) { return false };
-    	var value = Blockchain.transaction.value;
-    	if(value.lt(this.minAmount)) { return false };
     	if(this.starDataArchive.get(id) != null) { return false };
     	var user = Blockchain.transaction.from;
     	this.starDataArchive.set(id, {userId: user,
