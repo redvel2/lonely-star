@@ -517,7 +517,7 @@ function setName() {
   if(!input) { return };
   let context = StarInfoView.getCurrentContext()
   if(!context) { return };
-  nebPay.simulateCall(contractAddress, 0.1, "setName", JSON.stringify([context.star.ID, input]), {
+  nebPay.simulateCall(contractAddress, 0, "setName", JSON.stringify([context.star.ID, input]), {
                 qrcode: {
                     showQRCode: false
                 },
@@ -528,7 +528,7 @@ function setName() {
                 callback: function(resp) { 
                   console.log("RESP IS ", resp);
                   if(resp.result == 'true') {
-                    nebPay.call(contractAddress, 0.1, "setName", JSON.stringify([context.star.ID, input]), {
+                    nebPay.call(contractAddress, 0, "setName", JSON.stringify([context.star.ID, input]), {
                         qrcode: {
                             showQRCode: false
                         },
@@ -630,7 +630,7 @@ audio.loop = true;
 //NebPay init
 let NebPay = require("nebpay");
 let nebPay = new NebPay();
-let contractAddress = "n1vq2CbL569kA47jgxnPuU3tyu8jFnMYHS7";
+let contractAddress = "n1oDt1qXFiTT1y67CMr6syWZcKpCGDCHu8P";
 
 
 // ---- Load all resources and draw objects -----
